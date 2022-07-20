@@ -1,4 +1,4 @@
-import type { Bike, Reservation, User } from "@prisma/client";
+import type { User } from "@prisma/client";
 import { useEffect, useMemo, useState } from "react";
 import type {
   Column,
@@ -19,7 +19,6 @@ import {
   Table,
   TableContainer,
   Tbody,
-  Text,
   Td,
   Th,
   Thead,
@@ -28,13 +27,14 @@ import {
   Button,
   HStack,
   Center,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
 } from "@chakra-ui/react";
-
-type BikeDetail = Bike & {
-  averageRating: number;
-  isAvailable: boolean;
-  activeReservation: Reservation;
-};
+import { BikeDetail } from "~/routes/bikes";
+import { Link } from "@remix-run/react";
 
 function Filter({
   column,
@@ -50,10 +50,11 @@ function Filter({
   const columnFilterValue = column.getFilterValue();
 
   const uniqueValues = column.getFacetedUniqueValues();
+  const sampleValue = [...uniqueValues.keys()].filter((v) => v !== null)[0];
 
   const sortedUniqueValues = useMemo(
     () =>
-      typeof firstValue === "number"
+      typeof sampleValue === "number"
         ? []
         : Array.from(uniqueValues.keys()).sort(),
     [uniqueValues]
@@ -63,41 +64,34 @@ function Filter({
     return null;
   }
 
-  if (typeof firstValue === "number") {
+  if (typeof sampleValue === "number") {
     return (
-      <div>
-        <div className="flex space-x-2">
-          <DebouncedInput
-            type="number"
-            min={1}
+      <Box>
+        <HStack>
+          <DebouncedNumberInput
+            min={0}
             max={5}
-            value={(columnFilterValue as [number, number])?.[0] ?? ""}
+            value={(columnFilterValue as [number, number])?.[0]}
             onChange={(value) =>
               column.setFilterValue((old: [number, number]) => [
                 value,
                 old?.[1],
               ])
             }
-            placeholder={`Min`}
-            className="w-24 border shadow rounded"
           />
-          <DebouncedInput
-            type="number"
+          <DebouncedNumberInput
             min={1}
             max={5}
-            value={(columnFilterValue as [number, number])?.[1] ?? ""}
+            value={(columnFilterValue as [number, number])?.[1]}
             onChange={(value) =>
               column.setFilterValue((old: [number, number]) => [
                 old?.[0],
                 value,
               ])
             }
-            placeholder={`Max`}
-            className="w-24 border shadow rounded"
           />
-        </div>
-        <div className="h-1" />
-      </div>
+        </HStack>
+      </Box>
     );
   }
 
@@ -116,7 +110,6 @@ function Filter({
         className="w-36 border shadow rounded"
         list={column.id + "list"}
       />
-      <div className="h-1" />
     </>
   );
 }
@@ -157,6 +150,52 @@ function DebouncedInput({
   );
 }
 
+function DebouncedNumberInput({
+  value: initialValue,
+  onChange,
+  debounce = 500,
+  min,
+  max,
+}: {
+  value: number;
+  onChange: (value: number) => void;
+  debounce?: number;
+  min?: number;
+  max?: number;
+}) {
+  const [value, setValue] = useState<number>(initialValue);
+
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      onChange(value);
+    }, debounce);
+
+    return () => clearTimeout(timeout);
+  }, [value]);
+
+  return (
+    <NumberInput
+      value={value}
+      onChange={(s, n) => setValue(n)}
+      border="2px solid #ccc"
+      borderRadius={4}
+      size="sm"
+      min={min}
+      max={max}
+    >
+      <NumberInputField disabled />
+      <NumberInputStepper>
+        <NumberIncrementStepper />
+        <NumberDecrementStepper />
+      </NumberInputStepper>
+    </NumberInput>
+  );
+}
+
 type BikeListProps = {
   bikes?: BikeDetail[];
   user: User;
@@ -185,6 +224,7 @@ export default function BikeList({
       {
         accessorKey: "averageRating",
         header: "Rating",
+        filterFn: "inNumberRange",
       },
       {
         id: "isAvailable",
@@ -196,12 +236,14 @@ export default function BikeList({
         header: "",
         cell: ({ row: { original } }) => (
           <HStack>
-            <Button colorScheme={"teal"}>Rate</Button>
+            <Button colorScheme={"teal"}>
+              <Link to={`/bikes/rating/${original.id}`}>Rate</Link>
+            </Button>
             {original.isAvailable ? (
               <Button colorScheme={"teal"}>Book</Button>
             ) : null}
             {original.activeReservation?.userId === user.id ? (
-              <Button colorScheme={"teal"}>Cancel Booking</Button>
+              <Button colorScheme={"red"}>Cancel Booking</Button>
             ) : null}
           </HStack>
         ),
@@ -213,7 +255,7 @@ export default function BikeList({
       {
         id: "managerActions",
         header: "",
-        cell: ({ row: { original } }) => (
+        cell: () => (
           <Center>
             <HStack spacing={2}>
               <Button colorScheme={"teal"}>Edit</Button>
@@ -227,7 +269,13 @@ export default function BikeList({
     return isAdmin ? adminColumns : columns;
   }, []);
 
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
+    {
+      id: "averageRating",
+      value: [0, 5],
+    },
+  ]);
+
   const table = useReactTable<BikeDetail>({
     columns,
     data: bikes,
@@ -240,7 +288,7 @@ export default function BikeList({
 
   return (
     <TableContainer>
-      <Table>
+      <Table sx={{ tableLayout: "fixed" }}>
         <Thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <Tr key={headerGroup.id}>
