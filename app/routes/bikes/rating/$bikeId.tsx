@@ -77,8 +77,8 @@ export default function BikeRating() {
           </RadioGroup>
 
           <HStack spacing={8}>
-            <Button colorScheme="blue">
-              <Link to="/bikes">Close</Link>
+            <Button colorScheme="blue" as={Link} to="/bikes">
+              Close
             </Button>
             <Button colorScheme="teal" type="submit" disabled={!rating}>
               Submit

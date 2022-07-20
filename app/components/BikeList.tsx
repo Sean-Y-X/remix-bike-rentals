@@ -236,8 +236,12 @@ export default function BikeList({
         header: "",
         cell: ({ row: { original } }) => (
           <HStack>
-            <Button colorScheme={"teal"}>
-              <Link to={`/bikes/rating/${original.id}`}>Rate</Link>
+            <Button
+              colorScheme={"teal"}
+              as={Link}
+              to={`/bikes/rating/${original.id}`}
+            >
+              Rate
             </Button>
             {original.isAvailable ? (
               <Button colorScheme={"teal"}>Book</Button>
