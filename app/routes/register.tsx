@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import type { ActionFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Form, Link, useActionData } from "@remix-run/react";
+import { Form, Link, useActionData, useTransition } from "@remix-run/react";
 import { db } from "~/utils/db.server";
 import { createUserSession, register } from "~/utils/session.server";
 
@@ -50,6 +50,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function Register() {
   const actionData = useActionData<ActionData>();
+  const { state } = useTransition();
 
   return (
     <Center height="100vh" width="100vw">
@@ -86,14 +87,19 @@ export default function Register() {
                 <AlertDescription>{actionData.formError}</AlertDescription>
               </Alert>
             ) : null}
-            <Button colorScheme="teal" type="submit" marginY={4}>
+            <Button
+              colorScheme="teal"
+              type="submit"
+              marginY={4}
+              disabled={state === "submitting"}
+            >
               Register
             </Button>
           </FormControl>
         </Form>
 
         <Text>
-          Already have an account yet?{" "}
+          Already have an account?{" "}
           <Link to="/login" style={{ color: "teal" }}>
             Login
           </Link>

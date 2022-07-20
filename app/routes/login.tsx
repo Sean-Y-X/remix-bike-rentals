@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import type { ActionFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Form, Link, useActionData } from "@remix-run/react";
+import { Form, Link, useActionData, useTransition } from "@remix-run/react";
 import { createUserSession, login } from "~/utils/session.server";
 
 type ActionData = {
@@ -47,6 +47,8 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function Login() {
   const actionData = useActionData<ActionData>();
+  const { state } = useTransition();
+
   return (
     <Center height="100vh" width="100vw">
       <Container
@@ -77,7 +79,12 @@ export default function Login() {
               <AlertDescription>{actionData.formError}</AlertDescription>
             </Alert>
           ) : null}
-          <Button colorScheme="teal" type="submit" marginY={4}>
+          <Button
+            colorScheme="teal"
+            type="submit"
+            marginY={4}
+            disabled={state === "submitting"}
+          >
             Login
           </Button>
         </Form>

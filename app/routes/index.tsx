@@ -1,4 +1,5 @@
-import { LoaderFunction, redirect } from "@remix-run/node";
+import type { LoaderFunction } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { getUser } from "~/utils/session.server";
 import { Center, Spinner } from "@chakra-ui/react";
 
@@ -13,7 +14,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function Index() {
   return (
-    <Center>
+    <Center height="100vh" width="100vw">
       <Spinner />
     </Center>
   );

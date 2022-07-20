@@ -3,6 +3,7 @@ import { Link, useLoaderData } from "@remix-run/react";
 import { requireAdmin } from "~/utils/session.server";
 
 export const loader: LoaderFunction = async ({ request }) => {
+  console.log(request.headers);
   const manager = await requireAdmin(request);
   return manager;
 };
@@ -13,7 +14,7 @@ export default function Admin() {
     <div>
       <h1>Hi {manager?.username}</h1>
       <div>
-        <Link to="/admin/bikes">Manage Bikes</Link>
+        <Link to="/bikes">Manage Bikes</Link>
       </div>
       <div>
         <Link to="/admin/users">Manage Users</Link>

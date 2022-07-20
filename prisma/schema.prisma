@@ -54,4 +54,5 @@ model Rating {
   user      User     @relation(fields: [userId], references: [id])
   bikeId    String
   bike      Bike     @relation(fields: [bikeId], references: [id])
+  rating    Int
 }
