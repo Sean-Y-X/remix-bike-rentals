@@ -1,7 +1,7 @@
 import {
   Alert,
+  AlertDescription,
   AlertIcon,
-  AlertTitle,
   Button,
   Center,
   Container,
@@ -37,7 +37,7 @@ export const action: ActionFunction = async ({ request }) => {
   if (!user) {
     return badRequest({
       fields,
-      formError: `Email/Password combination is incorrect`,
+      formError: `Your email/password combination is incorrect.`,
     });
   }
   const redirectTo = user.isAdmin ? "/admin" : "/bikes";
@@ -66,25 +66,22 @@ export default function Login() {
             />
             <FormLabel marginY={2}>password</FormLabel>
             <Input
-              marginBottom={2}
               type="password"
               name="password"
               defaultValue={actionData?.fields?.password}
             />
           </FormControl>
           {actionData?.formError ? (
-            <Alert status="error">
+            <Alert status="error" marginTop={2}>
               <AlertIcon />
-              <AlertTitle>
-                Your email and password combination is incorrect.
-              </AlertTitle>
+              <AlertDescription>{actionData.formError}</AlertDescription>
             </Alert>
           ) : null}
-          <Button colorScheme="teal" type="submit" marginY={2}>
+          <Button colorScheme="teal" type="submit" marginY={4}>
             Login
           </Button>
         </Form>
-        <Text marginY={1}>
+        <Text>
           Don't have an account yet?{" "}
           <Link to="/register" style={{ color: "teal" }}>
             Register

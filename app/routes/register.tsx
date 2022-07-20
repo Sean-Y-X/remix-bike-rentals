@@ -1,6 +1,19 @@
+import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  Button,
+  Center,
+  Container,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
+  Text,
+} from "@chakra-ui/react";
 import type { ActionFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Link, useActionData } from "@remix-run/react";
+import { Form, Link, useActionData } from "@remix-run/react";
 import { db } from "~/utils/db.server";
 import { createUserSession, register } from "~/utils/session.server";
 
@@ -26,7 +39,7 @@ export const action: ActionFunction = async ({ request }) => {
   if (userExists) {
     return badRequest({
       fields,
-      formError: `User with username ${username} already exists`,
+      formError: `User with email ${email} already exists`,
     });
   }
 
@@ -37,42 +50,55 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function Register() {
   const actionData = useActionData<ActionData>();
+
   return (
-    <>
-      <h1>Register</h1>
-      <form method="post">
-        <label>Email</label>
-        <input
-          type="email"
-          name="email"
-          defaultValue={actionData?.fields?.email}
-        />
-        <label>Username</label>
-        <input
-          type="text"
-          name="username"
-          defaultValue={actionData?.fields?.username}
-        />
-        <label>Password</label>
-        <input
-          type="password"
-          name="password"
-          defaultValue={actionData?.fields?.password}
-        />
-        <button type="submit">Register</button>
+    <Center height="100vh" width="100vw">
+      <Container
+        border={"3px solid #ddd"}
+        borderRadius={"12px"}
+        padding={"24px"}
+        shadow={"lg"}
+      >
+        <Heading marginY={4}>Register</Heading>
+        <Form method="post">
+          <FormControl isRequired>
+            <FormLabel marginY={2}>Email</FormLabel>
+            <Input
+              type="email"
+              name="email"
+              defaultValue={actionData?.fields?.email}
+            />
+            <FormLabel marginY={2}>Username</FormLabel>
+            <Input
+              type="text"
+              name="username"
+              defaultValue={actionData?.fields?.username}
+            />
+            <FormLabel marginY={2}>Password</FormLabel>
+            <Input
+              type="password"
+              name="password"
+              defaultValue={actionData?.fields?.password}
+            />
+            {actionData?.formError ? (
+              <Alert status="error" marginTop={2}>
+                <AlertIcon />
+                <AlertDescription>{actionData.formError}</AlertDescription>
+              </Alert>
+            ) : null}
+            <Button colorScheme="teal" type="submit" marginY={4}>
+              Register
+            </Button>
+          </FormControl>
+        </Form>
 
-        <div id="form-error-message">
-          {actionData?.formError ? (
-            <p className="form-validation-error" role="alert">
-              {actionData.formError}
-            </p>
-          ) : null}
-        </div>
-      </form>
-
-      <p>
-        Already have an account? <Link to="/login">Login</Link>
-      </p>
-    </>
+        <Text>
+          Already have an account yet?{" "}
+          <Link to="/login" style={{ color: "teal" }}>
+            Login
+          </Link>
+        </Text>
+      </Container>
+    </Center>
   );
 }
