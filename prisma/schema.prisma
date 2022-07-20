@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(uuid())
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  email        String        @unique
+  username     String
+  isAdmin      Boolean       @default(false)
+  passwordHash String
+  reservations Reservation[]
+  ratings      Rating[]
+}
+
+model Bike {
+  id           String        @id @default(uuid())
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  model        String
+  color        String
+  location     String
+  reservations Reservation[]
+  ratings      Rating[]
+}
+
+model Reservation {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  startTime   DateTime
+  endTime     DateTime
+  isCancelled Boolean  @default(false)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  bikeId      String
+  bike        Bike     @relation(fields: [bikeId], references: [id])
+}
+
+model Rating {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  bikeId    String
+  bike      Bike     @relation(fields: [bikeId], references: [id])
+}
