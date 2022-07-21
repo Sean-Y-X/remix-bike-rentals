@@ -5,7 +5,7 @@ import { Link, useLoaderData } from "@remix-run/react";
 import { endOfDay, isAfter, isBefore, startOfDay } from "date-fns";
 import BikeList from "~/components/BikeList";
 import { db } from "~/utils/db.server";
-import { getUser, logout } from "~/utils/session.server";
+import { getUser } from "~/utils/session.server";
 
 export type BikeDetail = Bike & {
   averageRating: number;

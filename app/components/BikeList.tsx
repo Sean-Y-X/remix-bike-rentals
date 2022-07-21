@@ -249,23 +249,41 @@ export default function BikeList({
               </Button>
             ) : null}
             {original.activeReservation?.userId === user.id ? (
-              <Button colorScheme={"red"}>Cancel Booking</Button>
+              <Button
+                colorScheme={"red"}
+                as={Link}
+                to={`reservation/cancel/${original.activeReservation.id}`}
+              >
+                Cancel Booking
+              </Button>
             ) : null}
           </HStack>
         ),
       },
     ];
 
-    const adminColumns = [
+    const adminColumns: ColumnDef<BikeDetail>[] = [
       ...columns,
       {
         id: "managerActions",
         header: "",
-        cell: () => (
+        cell: ({ row: { original } }) => (
           <Center>
             <HStack spacing={2}>
-              <Button colorScheme={"teal"}>Edit</Button>
-              <Button colorScheme={"red"}>Delete</Button>
+              <Button
+                colorScheme="teal"
+                as={Link}
+                to={`/admin/bikes/${original.id}`}
+              >
+                Edit
+              </Button>
+              <Button
+                colorScheme="red"
+                as={Link}
+                to={`/admin/bikes/delete/${original.id}`}
+              >
+                Delete
+              </Button>
             </HStack>
           </Center>
         ),

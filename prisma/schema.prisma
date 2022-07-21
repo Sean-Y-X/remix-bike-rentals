@@ -41,9 +41,9 @@ model Reservation {
   endDate     DateTime
   isCancelled Boolean  @default(false)
   userId      String
-  user        User     @relation(fields: [userId], references: [id])
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   bikeId      String
-  bike        Bike     @relation(fields: [bikeId], references: [id])
+  bike        Bike     @relation(fields: [bikeId], references: [id], onDelete: Cascade)
 }
 
 model Rating {
@@ -51,8 +51,8 @@ model Rating {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   bikeId    String
-  bike      Bike     @relation(fields: [bikeId], references: [id])
+  bike      Bike     @relation(fields: [bikeId], references: [id], onDelete: Cascade)
   rating    Int
 }

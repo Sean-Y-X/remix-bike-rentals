@@ -88,7 +88,7 @@ export default function AddReservation() {
             <input
               type={"hidden"}
               name="endDate"
-              value={date ? format(date, "yyyy-MM-dd") : null}
+              value={date ? format(date, "yyyy-MM-dd") : undefined}
             />
           </FormControl>
           <Button colorScheme="teal" type="submit" marginY={8}>
