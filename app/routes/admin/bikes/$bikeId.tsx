@@ -73,7 +73,7 @@ export default function EditBike() {
             />
           </FormControl>
           <Flex marginY={8}>
-            <Button colorScheme="blue" as={Link} to="/bikes">
+            <Button colorScheme="blue" as={Link} to="/admin/bikes">
               Back
             </Button>
             <Spacer />

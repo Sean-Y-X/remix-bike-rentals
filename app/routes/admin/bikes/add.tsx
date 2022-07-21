@@ -46,7 +46,7 @@ export default function AddBike() {
             <Input name="location" placeholder="Location" marginY={4} />
           </FormControl>
           <Flex marginY={8}>
-            <Button colorScheme="blue" as={Link} to="/bikes">
+            <Button colorScheme="blue" as={Link} to="/admin/bikes">
               Back
             </Button>
             <Spacer />
