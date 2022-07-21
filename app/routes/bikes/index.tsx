@@ -31,11 +31,15 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   const now = new Date();
 
-  const startDate = params.startDate
-    ? new Date(params.startDate)
+  const url = new URL(request.url);
+  const startDateParam = url.searchParams.get("startDate")!;
+  const endDateParam = url.searchParams.get("endDate")!;
+
+  const startDate = startDateParam
+    ? new Date(startDateParam)
     : startOfDay(addDays(now, 1));
-  const endDate = params.endDate
-    ? new Date(params.endDate)
+  const endDate = endDateParam
+    ? new Date(endDateParam)
     : endOfDay(addDays(now, 2));
 
   if (isBefore(endDate, startDate)) {
