@@ -16,15 +16,7 @@ import {
   CalendarDays,
 } from "@uselessdev/datepicker";
 import type { CalendarValues, CalendarDate } from "@uselessdev/datepicker";
-import {
-  endOfDay,
-  format,
-  isAfter,
-  isBefore,
-  startOfDay,
-  addMilliseconds,
-  addDays,
-} from "date-fns";
+import { endOfDay, isBefore, startOfDay, addDays } from "date-fns";
 import { useState } from "react";
 import BikeList from "~/components/BikeList";
 import { db } from "~/utils/db.server";
@@ -39,10 +31,10 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   const now = new Date();
 
-  let startDate = params.startDate
+  const startDate = params.startDate
     ? new Date(params.startDate)
     : startOfDay(addDays(now, 1));
-  let endDate = params.endDate
+  const endDate = params.endDate
     ? new Date(params.endDate)
     : endOfDay(addDays(now, 2));
 
@@ -99,17 +91,15 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function Bikes() {
   const { bikes, user, startDate, endDate } = useLoaderData();
-  const [dateRange, setDateRange] = useState<CalendarValues>({
+  const [dateRange, setDateRange] = useState<{ start: Date; end: Date }>({
     start: new Date(startDate),
     end: new Date(endDate),
   });
 
-  console.log("dateRange", dateRange);
-
   const handleDateRangeChange = (values: CalendarValues | CalendarDate) => {
     const valuesAsCalendarValues = values as CalendarValues;
     setDateRange({
-      start: valuesAsCalendarValues.start,
+      start: new Date(valuesAsCalendarValues.start!),
       end: endOfDay(new Date(valuesAsCalendarValues.end!)),
     });
   };
@@ -172,7 +162,11 @@ export default function Bikes() {
           </Button>
         </Form>
       </Flex>
-      <BikeList bikes={bikes} isAdmin={user.isAdmin} user={user} />
+      <BikeList
+        bikes={bikes}
+        startDate={dateRange.start}
+        endDate={dateRange.end}
+      />
     </>
   );
 }

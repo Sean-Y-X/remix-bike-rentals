@@ -197,14 +197,14 @@ function DebouncedNumberInput({
 
 type BikeListProps = {
   bikes?: BikeDetail[];
-  user: User;
-  isAdmin: boolean;
+  startDate: Date;
+  endDate: Date;
 };
 
 export default function BikeList({
   bikes = [],
-  user,
-  isAdmin = false,
+  startDate,
+  endDate,
 }: BikeListProps) {
   const columns = useMemo(() => {
     const columns: ColumnDef<BikeDetail>[] = [
@@ -236,7 +236,9 @@ export default function BikeList({
             <Button
               colorScheme={"teal"}
               as={Link}
-              to={`reservation/${original.id}`}
+              to={`reservation/${
+                original.id
+              }?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`}
             >
               Book
             </Button>
