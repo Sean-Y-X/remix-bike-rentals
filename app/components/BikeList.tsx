@@ -1,4 +1,3 @@
-import type { User } from "@prisma/client";
 import { useEffect, useMemo, useState } from "react";
 import type {
   Column,
