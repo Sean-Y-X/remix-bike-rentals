@@ -1,4 +1,4 @@
-import { Button, Flex, HStack, Spacer } from "@chakra-ui/react";
+import { Button, Flex, Spacer } from "@chakra-ui/react";
 import type { Bike, Reservation } from "@prisma/client";
 import type { LoaderFunction } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
@@ -53,23 +53,20 @@ export default function Bikes() {
   return (
     <>
       <Flex margin={8}>
-        <Button colorScheme="blue" as={Link} to="/logout">
-          Logout
-        </Button>
-        <Spacer />
-
         {user.isAdmin ? (
-          <HStack spacing={8}>
-            <Button colorScheme="teal" as={Link} to="/admin/bikes/add">
-              Add a bike
-            </Button>
-            <Button colorScheme="teal" as={Link} to="/admin/users">
-              Manager Users
-            </Button>
-          </HStack>
+          <Button colorScheme="blue" as={Link} to="/admin">
+            Back
+          </Button>
         ) : (
-          <></>
+          <Button colorScheme="blue" as={Link} to="/logout">
+            Logout
+          </Button>
         )}
+
+        <Spacer />
+        <Button colorScheme="teal" as={Link} to="/reservations">
+          My Reservations
+        </Button>
       </Flex>
       <BikeList bikes={bikes} isAdmin={user.isAdmin} user={user} />
     </>

@@ -11,5 +11,5 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     data: { isCancelled: true },
   });
 
-  return redirect("/bikes");
+  return redirect("/reservations");
 };

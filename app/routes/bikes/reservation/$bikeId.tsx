@@ -46,7 +46,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     },
   });
 
-  return redirect("/bikes");
+  return redirect("/reservations");
 };
 
 export default function AddReservation() {

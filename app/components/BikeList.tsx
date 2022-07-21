@@ -26,7 +26,6 @@ import {
   VStack,
   Button,
   HStack,
-  Center,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
@@ -262,35 +261,7 @@ export default function BikeList({
       },
     ];
 
-    const adminColumns: ColumnDef<BikeDetail>[] = [
-      ...columns,
-      {
-        id: "managerActions",
-        header: "",
-        cell: ({ row: { original } }) => (
-          <Center>
-            <HStack spacing={2}>
-              <Button
-                colorScheme="teal"
-                as={Link}
-                to={`/admin/bikes/${original.id}`}
-              >
-                Edit
-              </Button>
-              <Button
-                colorScheme="red"
-                as={Link}
-                to={`/admin/bikes/delete/${original.id}`}
-              >
-                Delete
-              </Button>
-            </HStack>
-          </Center>
-        ),
-      },
-    ];
-
-    return isAdmin ? adminColumns : columns;
+    return columns;
   }, []);
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
@@ -344,13 +315,11 @@ export default function BikeList({
               <Tr key={row.id}>
                 {row.getVisibleCells().map((cell) => {
                   return (
-                    <Td key={cell.id}>
-                      <Box textAlign="center">
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </Box>
+                    <Td key={cell.id} textAlign="center">
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </Td>
                   );
                 })}

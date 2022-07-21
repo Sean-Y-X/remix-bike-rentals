@@ -18,7 +18,7 @@ export default function Admin() {
         </Heading>
         <VStack spacing={16}>
           <Button colorScheme="teal" as={Link} to="/bikes" width="100%">
-            Book bikes
+            Book Bikes
           </Button>
           <Button colorScheme="teal" as={Link} to="bikes" width="100%">
             Manage Bikes
