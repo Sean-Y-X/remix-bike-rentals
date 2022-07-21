@@ -16,19 +16,6 @@ import { getUser } from "~/utils/session.server";
 import { useState } from "react";
 import { addDays, endOfDay, format } from "date-fns";
 import type { CalendarValues, CalendarDate } from "@uselessdev/datepicker";
-import {
-  Calendar,
-  CalendarDefaultTheme,
-  CalendarControls,
-  CalendarPrevButton,
-  CalendarNextButton,
-  CalendarMonths,
-  CalendarMonth,
-  CalendarMonthName,
-  CalendarWeek,
-  CalendarDays,
-} from "@uselessdev/datepicker";
-import { ChakraProvider } from "@chakra-ui/react";
 
 export const action: ActionFunction = async ({ request, params }) => {
   const user = await getUser(request);
@@ -65,29 +52,7 @@ export default function AddReservation() {
           Your reservation will start today. Please select your reservation end
           date.
         </Text>
-        <Center>
-          <ChakraProvider theme={CalendarDefaultTheme}>
-            <Calendar
-              value={{ start: date }}
-              onSelectDate={handleSelectDate}
-              singleDateSelection
-              disablePastDates
-            >
-              <CalendarControls>
-                <CalendarPrevButton />
-                <CalendarNextButton />
-              </CalendarControls>
-
-              <CalendarMonths>
-                <CalendarMonth>
-                  <CalendarMonthName />
-                  <CalendarWeek />
-                  <CalendarDays />
-                </CalendarMonth>
-              </CalendarMonths>
-            </Calendar>
-          </ChakraProvider>
-        </Center>
+        <Center></Center>
         <Form method="post">
           <FormControl isRequired>
             <input

@@ -226,11 +226,6 @@ export default function BikeList({
         filterFn: "inNumberRange",
       },
       {
-        id: "isAvailable",
-        header: "Available",
-        accessorFn: (bike: BikeDetail) => (bike.isAvailable ? "Yes" : "No"),
-      },
-      {
         id: "userActions",
         header: "",
         cell: ({ row: { original } }) => (
@@ -238,24 +233,13 @@ export default function BikeList({
             <Button colorScheme={"teal"} as={Link} to={`rating/${original.id}`}>
               Rate
             </Button>
-            {original.isAvailable ? (
-              <Button
-                colorScheme={"teal"}
-                as={Link}
-                to={`reservation/${original.id}`}
-              >
-                Book
-              </Button>
-            ) : null}
-            {original.activeReservation?.userId === user.id ? (
-              <Button
-                colorScheme={"red"}
-                as={Link}
-                to={`reservation/cancel/${original.activeReservation.id}`}
-              >
-                Cancel Booking
-              </Button>
-            ) : null}
+            <Button
+              colorScheme={"teal"}
+              as={Link}
+              to={`reservation/${original.id}`}
+            >
+              Book
+            </Button>
           </HStack>
         ),
       },
