@@ -7,7 +7,6 @@ import {
   Th,
   Thead,
   Tr,
-  VStack,
   Button,
   HStack,
   Flex,

@@ -82,7 +82,7 @@ export default function ManageUsers() {
     ];
 
     return columns;
-  }, []);
+  }, [self.id]);
 
   const table = useReactTable<User>({
     columns,
