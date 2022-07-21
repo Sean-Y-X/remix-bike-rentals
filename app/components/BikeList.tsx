@@ -33,7 +33,7 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
 } from "@chakra-ui/react";
-import { BikeDetail } from "~/routes/bikes";
+import type { BikeDetail } from "~/routes/bikes";
 import { Link } from "@remix-run/react";
 
 function Filter({

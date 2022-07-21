@@ -2,17 +2,19 @@ import {
   Button,
   Center,
   Container,
+  Flex,
   FormControl,
   Heading,
+  Spacer,
   Text,
 } from "@chakra-ui/react";
 import type { ActionFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import { Form } from "@remix-run/react";
+import { Form, Link, useTransition } from "@remix-run/react";
 import { db } from "~/utils/db.server";
 import { getUser } from "~/utils/session.server";
 import { useState } from "react";
-import { endOfDay, format } from "date-fns";
+import { addDays, endOfDay, format } from "date-fns";
 import type { CalendarValues, CalendarDate } from "@uselessdev/datepicker";
 import {
   Calendar,
@@ -48,7 +50,8 @@ export const action: ActionFunction = async ({ request, params }) => {
 };
 
 export default function AddReservation() {
-  const [date, setDate] = useState<CalendarDate>();
+  const [date, setDate] = useState<CalendarDate>(addDays(new Date(), 1));
+  const { state } = useTransition();
 
   const handleSelectDate = (date: CalendarDate | CalendarValues) => {
     setDate(date as CalendarDate);
@@ -58,42 +61,54 @@ export default function AddReservation() {
     <Center height="100vh" width="100vw">
       <Container>
         <Heading marginY={8}>Booking</Heading>
-        <Text>
+        <Text marginBottom={8}>
           Your reservation will start today. Please select your reservation end
           date.
         </Text>
-        <ChakraProvider theme={CalendarDefaultTheme}>
-          <Calendar
-            value={{ start: date }}
-            onSelectDate={handleSelectDate}
-            singleDateSelection
-            disablePastDates
-          >
-            <CalendarControls>
-              <CalendarPrevButton />
-              <CalendarNextButton />
-            </CalendarControls>
+        <Center>
+          <ChakraProvider theme={CalendarDefaultTheme}>
+            <Calendar
+              value={{ start: date }}
+              onSelectDate={handleSelectDate}
+              singleDateSelection
+              disablePastDates
+            >
+              <CalendarControls>
+                <CalendarPrevButton />
+                <CalendarNextButton />
+              </CalendarControls>
 
-            <CalendarMonths>
-              <CalendarMonth>
-                <CalendarMonthName />
-                <CalendarWeek />
-                <CalendarDays />
-              </CalendarMonth>
-            </CalendarMonths>
-          </Calendar>
-        </ChakraProvider>
+              <CalendarMonths>
+                <CalendarMonth>
+                  <CalendarMonthName />
+                  <CalendarWeek />
+                  <CalendarDays />
+                </CalendarMonth>
+              </CalendarMonths>
+            </Calendar>
+          </ChakraProvider>
+        </Center>
         <Form method="post">
           <FormControl isRequired>
             <input
               type={"hidden"}
               name="endDate"
-              value={date ? format(date, "yyyy-MM-dd") : undefined}
+              value={format(date!, "yyyy-MM-dd")}
             />
           </FormControl>
-          <Button colorScheme="teal" type="submit" marginY={8}>
-            Add
-          </Button>
+          <Flex marginY={8}>
+            <Button colorScheme="blue" as={Link} to="/bikes">
+              Back
+            </Button>
+            <Spacer />
+            <Button
+              colorScheme="teal"
+              type="submit"
+              disabled={state === "submitting"}
+            >
+              Add
+            </Button>
+          </Flex>
         </Form>
       </Container>
     </Center>

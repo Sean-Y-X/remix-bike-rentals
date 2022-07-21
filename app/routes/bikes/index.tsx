@@ -53,6 +53,11 @@ export default function Bikes() {
   return (
     <>
       <Flex margin={8}>
+        <Button colorScheme="blue" as={Link} to="/logout">
+          Logout
+        </Button>
+        <Spacer />
+
         {user.isAdmin ? (
           <HStack spacing={8}>
             <Button colorScheme="teal" as={Link} to="/admin/bikes/add">
@@ -65,10 +70,6 @@ export default function Bikes() {
         ) : (
           <></>
         )}
-        <Spacer />
-        <Button colorScheme="blue" as={Link} to="/logout">
-          Logout
-        </Button>
       </Flex>
       <BikeList bikes={bikes} isAdmin={user.isAdmin} user={user} />
     </>

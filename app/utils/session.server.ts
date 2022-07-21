@@ -12,14 +12,20 @@ type registerForm = {
   username: string;
   password: string;
   email: string;
+  isAdmin?: boolean;
 };
 
-export async function register({ email, username, password }: registerForm) {
+export async function register({
+  email,
+  username,
+  password,
+  isAdmin = false,
+}: registerForm) {
   const passwordHash = await bcrypt.hash(password, 10);
   const user = await db.user.create({
-    data: { username, passwordHash, email },
+    data: { username, passwordHash, email, isAdmin },
   });
-  return { id: user.id, username, email, isAdmin: user.isAdmin };
+  return { id: user.id, username, email, isAdmin };
 }
 
 export async function login({ email, password }: LoginForm) {
