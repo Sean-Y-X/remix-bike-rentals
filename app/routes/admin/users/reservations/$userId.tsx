@@ -1,5 +1,8 @@
 import {
+  Button,
+  Flex,
   Heading,
+  Spacer,
   Table,
   TableContainer,
   Tbody,
@@ -7,89 +10,97 @@ import {
   Th,
   Thead,
   Tr,
-  VStack,
-  Button,
-  HStack,
-  Flex,
-  Spacer,
 } from "@chakra-ui/react";
-import type { Bike } from "@prisma/client";
 import type { LoaderFunction } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
-import { flexRender } from "@tanstack/react-table";
-import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
+import {
+  useReactTable,
+  getCoreRowModel,
+  flexRender,
+} from "@tanstack/react-table";
+import { format, isBefore } from "date-fns";
 import { useMemo } from "react";
+import type { ReservationDetails } from "~/routes/reservations";
 import { db } from "~/utils/db.server";
 import { requireAdmin } from "~/utils/session.server";
 
-export const loader: LoaderFunction = async ({ request }) => {
+export const loader: LoaderFunction = async ({ request, params }) => {
   await requireAdmin(request);
-  const bikes = await db.bike.findMany();
+  const userId = params.userId!;
+  const user = await db.user.findUnique({ where: { id: userId } });
+  const reservations = await db.reservation.findMany({
+    where: { userId },
+    include: { bike: true },
+  });
 
-  return bikes;
+  const reservationDetails = reservations?.map((r) => {
+    return {
+      ...r,
+      isExpired: isBefore(r.endDate, new Date()),
+    };
+  });
+
+  return { user, reservations: reservationDetails };
 };
-export default function AdminBikes() {
-  const bikes = useLoaderData();
+
+export default function UserReservations() {
+  const { user, reservations } = useLoaderData();
 
   const columns = useMemo(() => {
-    const columns: ColumnDef<Bike>[] = [
+    const columns: ColumnDef<ReservationDetails>[] = [
       {
-        accessorKey: "model",
-        header: "Model",
+        accessorKey: "startDate",
+        header: "Start Date",
+        cell: ({ row: { original } }) =>
+          format(new Date(original.startDate), "MM/dd/yyyy"),
       },
       {
-        accessorKey: "color",
-        header: "Color",
+        accessorKey: "endDate",
+        header: "End Date",
+        cell: ({ row: { original } }) =>
+          format(new Date(original.endDate), "MM/dd/yyyy"),
       },
       {
-        accessorKey: "location",
-        header: "Location",
+        header: "Bike",
+        accessorFn: (reservation) => reservation.bike!.model,
       },
       {
-        id: "actions",
-        header: "",
-        cell: ({ row: { original } }) => (
-          <HStack spacing={2}>
-            <Button colorScheme="teal" as={Link} to={`${original.id}`}>
-              Edit
-            </Button>
-            <Button
-              colorScheme={"teal"}
-              as={Link}
-              to={`reservations/${original.id}`}
-            >
-              Reservations
-            </Button>
-            <Button colorScheme="red" as={Link} to={`delete/${original.id}`}>
-              Delete
-            </Button>
-          </HStack>
-        ),
+        header: "Status",
+        accessorFn: (reservation) => {
+          if (reservation.isExpired) {
+            return "Expired";
+          }
+          if (reservation.isCancelled) {
+            return "Cancelled";
+          }
+          return "Active";
+        },
       },
     ];
 
     return columns;
   }, []);
 
-  const table = useReactTable<Bike>({
+  const table = useReactTable<ReservationDetails>({
     columns,
-    data: bikes,
+    data: reservations,
     getCoreRowModel: getCoreRowModel(),
   });
 
   return (
     <>
       <Flex margin={8}>
-        <Button colorScheme="blue" as={Link} to="/admin">
+        <Button colorScheme="blue" as={Link} to="/admin/users">
           Back
         </Button>
         <Spacer />
-        <Button colorScheme="teal" as={Link} to="add">
-          Add a bike
-        </Button>
       </Flex>
-      <TableContainer>
+      <Heading>Reservation History</Heading>
+      <Heading as="h3" size="md" marginY={4}>
+        User: {user.username} ({user.email})
+      </Heading>
+      <TableContainer marginY={8}>
         <Table sx={{ tableLayout: "fixed" }}>
           <Thead>
             {table.getHeaderGroups().map((headerGroup) => (

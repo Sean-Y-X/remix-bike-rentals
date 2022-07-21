@@ -60,6 +60,13 @@ export default function ManageUsers() {
             <Button colorScheme={"teal"} as={Link} to={`${original.id}`}>
               Edit
             </Button>
+            <Button
+              colorScheme={"teal"}
+              as={Link}
+              to={`reservations/${original.id}`}
+            >
+              Reservations
+            </Button>
             {original.id !== self.id ? (
               <Button
                 colorScheme={"red"}

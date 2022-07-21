@@ -11,7 +11,7 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import type { Bike, Reservation } from "@prisma/client";
+import type { Bike, Reservation, User } from "@prisma/client";
 import type { LoaderFunction } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
@@ -24,7 +24,8 @@ import { requireUserId } from "~/utils/session.server";
 
 export type ReservationDetails = Reservation & {
   isExpired: boolean;
-  bike: Bike;
+  bike?: Bike;
+  user?: User;
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -49,7 +50,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export default function MyReservations() {
-  const reservatgions = useLoaderData();
+  const reservations = useLoaderData();
 
   const columns = useMemo(() => {
     const columns: ColumnDef<ReservationDetails>[] = [
@@ -67,7 +68,7 @@ export default function MyReservations() {
       },
       {
         header: "Bike",
-        accessorFn: (reservation) => reservation.bike.model,
+        accessorFn: (reservation) => reservation.bike!.model,
       },
       {
         header: "Status",
@@ -102,7 +103,7 @@ export default function MyReservations() {
 
   const table = useReactTable<ReservationDetails>({
     columns,
-    data: reservatgions,
+    data: reservations,
     getCoreRowModel: getCoreRowModel(),
   });
 
