@@ -1,12 +1,12 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import { requireUserId } from "~/utils/session.server";
+import { getUser } from "~/utils/session.server";
 import { Center, Spinner } from "@chakra-ui/react";
 
 export const loader: LoaderFunction = async ({ request }) => {
-  let user = await requireUserId(request);
+  const user = await getUser(request);
   if (user) {
-    return redirect("/bikes");
+    return redirect(user.isAdmin ? "/admin" : "/bikes");
   } else {
     return redirect("/login");
   }

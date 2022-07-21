@@ -40,7 +40,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     where: { id: bikeId },
   });
 
-  return redirect("/bikes");
+  return redirect("/admin/bikes");
 };
 
 export default function EditBike() {

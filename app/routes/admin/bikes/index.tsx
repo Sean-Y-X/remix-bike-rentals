@@ -1,9 +1,5 @@
 import {
-  Button,
-  Flex,
   Heading,
-  HStack,
-  Spacer,
   Table,
   TableContainer,
   Tbody,
@@ -11,64 +7,56 @@ import {
   Th,
   Thead,
   Tr,
+  VStack,
+  Button,
+  HStack,
+  Flex,
+  Spacer,
 } from "@chakra-ui/react";
-import type { User } from "@prisma/client";
+import type { Bike } from "@prisma/client";
 import type { LoaderFunction } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import type { ColumnDef } from "@tanstack/react-table";
-import {
-  flexRender,
-  useReactTable,
-  getCoreRowModel,
-} from "@tanstack/react-table";
+import { flexRender } from "@tanstack/react-table";
+import { useReactTable, getCoreRowModel } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { db } from "~/utils/db.server";
 import { requireAdmin } from "~/utils/session.server";
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const self = await requireAdmin(request);
-  const users = await db.user.findMany({
-    select: { id: true, email: true, username: true, isAdmin: true },
-  });
+  await requireAdmin(request);
+  const bikes = await db.bike.findMany();
 
-  return { self, users };
+  return bikes;
 };
-
-export default function ManageUsers() {
-  const { self, users } = useLoaderData();
+export default function AdminBikes() {
+  const bikes = useLoaderData();
 
   const columns = useMemo(() => {
-    const columns: ColumnDef<User>[] = [
+    const columns: ColumnDef<Bike>[] = [
       {
-        accessorKey: "email",
-        header: "Email",
+        accessorKey: "model",
+        header: "Model",
       },
       {
-        accessorKey: "username",
-        header: "Name",
+        accessorKey: "color",
+        header: "Color",
       },
       {
-        id: "isAdmin",
-        header: "Manager",
-        accessorFn: (user) => (user.isAdmin ? "Yes" : "No"),
+        accessorKey: "location",
+        header: "Location",
       },
       {
         id: "actions",
         header: "",
         cell: ({ row: { original } }) => (
-          <HStack>
-            <Button colorScheme={"teal"} as={Link} to={`${original.id}`}>
+          <HStack spacing={2}>
+            <Button colorScheme="teal" as={Link} to={`${original.id}`}>
               Edit
             </Button>
-            {original.id !== self.id ? (
-              <Button
-                colorScheme={"red"}
-                as={Link}
-                to={`delete/${original.id}`}
-              >
-                Delete
-              </Button>
-            ) : null}
+            <Button colorScheme="red" as={Link} to={`delete/${original.id}`}>
+              Delete
+            </Button>
           </HStack>
         ),
       },
@@ -77,9 +65,9 @@ export default function ManageUsers() {
     return columns;
   }, []);
 
-  const table = useReactTable<User>({
+  const table = useReactTable<Bike>({
     columns,
-    data: users,
+    data: bikes,
     getCoreRowModel: getCoreRowModel(),
   });
 
@@ -91,7 +79,7 @@ export default function ManageUsers() {
         </Button>
         <Spacer />
         <Button colorScheme="teal" as={Link} to="add">
-          Add a user
+          Add a bike
         </Button>
       </Flex>
       <TableContainer>

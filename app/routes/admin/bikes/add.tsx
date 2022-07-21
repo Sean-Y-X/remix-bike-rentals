@@ -29,7 +29,7 @@ export const action: ActionFunction = async ({ request }) => {
     },
   });
 
-  return redirect("/bikes");
+  return redirect("/admin/bikes");
 };
 
 export default function AddBike() {
