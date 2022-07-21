@@ -26,6 +26,9 @@ export default function Admin() {
           <Button colorScheme="teal" as={Link} to="users" width="100%">
             Manage Users
           </Button>
+          <Button colorScheme="blue" as={Link} to="/logout" width="100%">
+            Logout
+          </Button>
         </VStack>
       </Container>
     </Center>

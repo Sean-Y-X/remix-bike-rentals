@@ -41,7 +41,8 @@ export const action: ActionFunction = async ({ request }) => {
     });
   }
 
-  return createUserSession(user.id, "/bikes");
+  const redirectUrl = user.isAdmin ? "/admin" : "/bikes";
+  return createUserSession(user.id, redirectUrl);
 };
 
 export default function Login() {
