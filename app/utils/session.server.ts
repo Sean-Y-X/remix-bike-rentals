@@ -81,7 +81,7 @@ export async function requireAdmin(request: Request) {
 export async function getUser(request: Request) {
   const userId = await getUserId(request);
   if (typeof userId !== "string") {
-    return null;
+    throw logout(request);
   }
 
   try {
@@ -89,19 +89,29 @@ export async function getUser(request: Request) {
       where: { id: userId },
       select: { id: true, username: true, email: true, isAdmin: true },
     });
+    if (!user) {
+      throw logout(request);
+    }
+
     return user;
-  } catch {
+  } catch (err) {
+    console.log(err);
     throw logout(request);
   }
 }
 
 export async function logout(request: Request) {
-  const session = await getUserSession(request);
-  return redirect("/login", {
-    headers: {
-      "Set-Cookie": await storage.destroySession(session),
-    },
-  });
+  try {
+    const session = await getUserSession(request);
+
+    return redirect("/login", {
+      headers: {
+        "Set-Cookie": await storage.destroySession(session),
+      },
+    });
+  } catch {
+    return redirect("/login");
+  }
 }
 
 export async function createUserSession(userId: string, redirectTo: string) {

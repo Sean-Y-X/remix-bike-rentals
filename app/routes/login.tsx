@@ -40,9 +40,8 @@ export const action: ActionFunction = async ({ request }) => {
       formError: `Your email/password combination is incorrect.`,
     });
   }
-  const redirectTo = user.isAdmin ? "/admin" : "/bikes";
 
-  return createUserSession(user.id, redirectTo);
+  return createUserSession(user.id, "/bikes");
 };
 
 export default function Login() {

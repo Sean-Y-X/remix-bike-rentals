@@ -2,10 +2,12 @@ import {
   Button,
   Center,
   Container,
+  Flex,
   Heading,
   HStack,
   Radio,
   RadioGroup,
+  Spacer,
 } from "@chakra-ui/react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
@@ -67,7 +69,7 @@ export default function BikeRating() {
             value={rating}
             marginY={8}
           >
-            <HStack spacing={8}>
+            <HStack spacing={20}>
               <Radio value="1">1</Radio>
               <Radio value="2">2</Radio>
               <Radio value="3">3</Radio>
@@ -76,14 +78,15 @@ export default function BikeRating() {
             </HStack>
           </RadioGroup>
 
-          <HStack spacing={8}>
+          <Flex marginY={8}>
             <Button colorScheme="blue" as={Link} to="/bikes">
               Close
             </Button>
+            <Spacer />
             <Button colorScheme="teal" type="submit" disabled={!rating}>
               Submit
             </Button>
-          </HStack>
+          </Flex>
         </Form>
       </Container>
     </Center>

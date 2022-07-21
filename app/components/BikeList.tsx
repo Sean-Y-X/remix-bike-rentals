@@ -236,15 +236,17 @@ export default function BikeList({
         header: "",
         cell: ({ row: { original } }) => (
           <HStack>
-            <Button
-              colorScheme={"teal"}
-              as={Link}
-              to={`/bikes/rating/${original.id}`}
-            >
+            <Button colorScheme={"teal"} as={Link} to={`rating/${original.id}`}>
               Rate
             </Button>
             {original.isAvailable ? (
-              <Button colorScheme={"teal"}>Book</Button>
+              <Button
+                colorScheme={"teal"}
+                as={Link}
+                to={`reservation/${original.id}`}
+              >
+                Book
+              </Button>
             ) : null}
             {original.activeReservation?.userId === user.id ? (
               <Button colorScheme={"red"}>Cancel Booking</Button>

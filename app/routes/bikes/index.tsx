@@ -1,9 +1,11 @@
+import { Button, Flex, HStack, Spacer } from "@chakra-ui/react";
 import type { Bike, Reservation } from "@prisma/client";
-import { LoaderFunction, redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import type { LoaderFunction } from "@remix-run/node";
+import { Link, useLoaderData } from "@remix-run/react";
+import { endOfDay, isAfter, isBefore, startOfDay } from "date-fns";
 import BikeList from "~/components/BikeList";
 import { db } from "~/utils/db.server";
-import { getUser } from "~/utils/session.server";
+import { getUser, logout } from "~/utils/session.server";
 
 export type BikeDetail = Bike & {
   averageRating: number;
@@ -24,20 +26,18 @@ export const loader: LoaderFunction = async ({ request }) => {
         bike.ratings.length
       : 0;
 
+    const activeReservation = bike.reservations?.find(
+      (res) =>
+        isBefore(startOfDay(res.startDate), now) &&
+        isAfter(endOfDay(res.endDate), now) &&
+        !res.isCancelled
+    );
+
     return {
       ...bike,
       averageRating: averageRating ? Number(averageRating.toFixed(2)) : null,
-      isAvailable: bike.reservations?.length
-        ? bike.reservations.reduce((acc, curr) => {
-            if (curr.endTime > now && !curr.isCancelled) {
-              return false;
-            }
-            return acc;
-          }, true)
-        : true,
-      activeReservation: bike.reservations?.find(
-        (res) => res.startTime < now && res.endTime > now
-      ),
+      isAvailable: !activeReservation,
+      activeReservation: activeReservation,
     };
   });
 
@@ -52,6 +52,24 @@ export default function Bikes() {
 
   return (
     <>
+      <Flex margin={8}>
+        {user.isAdmin ? (
+          <HStack spacing={8}>
+            <Button colorScheme="teal" as={Link} to="/admin/bikes/add">
+              Add a bike
+            </Button>
+            <Button colorScheme="teal" as={Link} to="/admin/users">
+              Manager Users
+            </Button>
+          </HStack>
+        ) : (
+          <></>
+        )}
+        <Spacer />
+        <Button colorScheme="blue" as={Link} to="/logout">
+          Logout
+        </Button>
+      </Flex>
       <BikeList bikes={bikes} isAdmin={user.isAdmin} user={user} />
     </>
   );

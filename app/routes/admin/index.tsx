@@ -3,7 +3,6 @@ import { Link, useLoaderData } from "@remix-run/react";
 import { requireAdmin } from "~/utils/session.server";
 
 export const loader: LoaderFunction = async ({ request }) => {
-  console.log(request.headers);
   const manager = await requireAdmin(request);
   return manager;
 };
