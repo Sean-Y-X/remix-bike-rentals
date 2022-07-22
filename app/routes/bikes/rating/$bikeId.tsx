@@ -31,8 +31,6 @@ export const action: ActionFunction = async ({ request, params }) => {
   const ratingId = form.get("ratingId")?.toString();
   const bikeId = params.bikeId;
 
-  console.log(rating, userId, bikeId);
-
   if (ratingId) {
     await db.rating.update({
       where: { id: ratingId },

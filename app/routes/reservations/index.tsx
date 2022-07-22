@@ -44,8 +44,6 @@ export const loader: LoaderFunction = async ({ request }) => {
     };
   });
 
-  console.log(reservationDetails);
-
   return reservationDetails;
 };
 
