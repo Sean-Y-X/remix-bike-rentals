@@ -85,12 +85,12 @@ export async function requireAdmin(request: Request) {
 }
 
 export async function getUser(request: Request) {
-  const userId = await getUserId(request);
-  if (typeof userId !== "string") {
-    throw logout(request);
-  }
-
   try {
+    const userId = await getUserId(request);
+    if (typeof userId !== "string") {
+      throw logout(request);
+    }
+
     const user = await db.user.findUnique({
       where: { id: userId },
       select: { id: true, username: true, email: true, isAdmin: true },
@@ -101,8 +101,7 @@ export async function getUser(request: Request) {
 
     return user;
   } catch (err) {
-    console.log(err);
-    throw logout(request);
+    throw redirect("/login");
   }
 }
 

@@ -4,14 +4,11 @@ import { getUser } from "~/utils/session.server";
 import { Center, Spinner } from "@chakra-ui/react";
 
 export const loader: LoaderFunction = async ({ request }) => {
-  try {
-    const user = await getUser(request);
-    if (user) {
-      return redirect(user.isAdmin ? "/admin" : "/bikes");
-    } else {
-      return redirect("/login");
-    }
-  } catch (error) {
+  const user = await getUser(request);
+
+  if (user) {
+    return redirect(user.isAdmin ? "/admin" : "/bikes");
+  } else {
     return redirect("/login");
   }
 };
